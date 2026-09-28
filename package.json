@@ -1,0 +1,12 @@
+{
+  "name": "tp-vllm-paged-attention",
+  "version": "1.0.0",
+  "description": "vLLM PagedAttention v2 virtual memory KV-cache allocator, chunked prefill co-scheduler, and FlashAttention-3 SRE manifests",
+  "main": "continuous_batcher.ts",
+  "scripts": {
+    "test": "bash scripts/validate.sh"
+  },
+  "keywords": ["vllm", "paged-attention", "chunked-prefill", "kv-cache", "flashattention-3", "gpu", "sre"],
+  "author": "Talari Pradeep <talaripradeep14@gmail.com>",
+  "license": "MIT"
+}

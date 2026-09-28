@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-paged-inference
+  namespace: ai-serving
+  labels:
+    app.kubernetes.io/name: vllm-paged-attention
+    engine: vllm-v2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vllm-paged-inference
+  template:
+    metadata:
+      labels:
+        app: vllm-paged-inference
+    spec:
+      containers:
+        - name: vllm-container
+          image: vllm/vllm-openai:v0.6.2
+          args:
+            - "--model"
+            - "meta-llama/Llama-3.1-70B-Instruct"
+            - "--tensor-parallel-size"
+            - "4"
+            - "--block-size"
+            - "16"
+            - "--enable-chunked-prefill"
+            - "--max-num-seqs"
+            - "256"
+          resources:
+            limits:
+              nvidia.com/gpu: 4
+              memory: 128Gi
+            requests:
+              nvidia.com/gpu: 4
+              memory: 64Gi
+          ports:
+            - containerPort: 8000
+              name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-paged-service
+  namespace: ai-serving
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      name: http-inference
+  selector:
+    app: vllm-paged-inference
